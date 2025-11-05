@@ -1,0 +1,33 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id           String        @id @default(cuid())
+  rut          String        @unique
+  passwordHash String
+  createdAt    DateTime      @default(now())
+  transactions Transaction[]
+}
+
+model Transaction {
+  id        String   @id @default(cuid())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+  type      TxType
+  amount    Decimal  @db.Decimal(14, 2)
+  date      DateTime
+  category  String?  @db.VarChar(50)
+  note      String?  @db.VarChar(200)
+  createdAt DateTime @default(now())
+}
+
+enum TxType {
+  IN
+  OUT
+}
