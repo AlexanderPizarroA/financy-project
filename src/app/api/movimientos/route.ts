@@ -7,7 +7,6 @@ import { Prisma } from "@prisma/client";
 const createSchema = z.object({
   type: z.enum(["IN", "OUT"]),
   amount: z.number().positive(),
-  category: z.string().max(50).optional().nullable(),
   note: z.string().max(200).optional().nullable(),
 });
 
@@ -53,7 +52,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ msg: "Datos inválidos", issues: parsed.error.issues }, { status: 400 });
   }
 
-  const { type, amount, category, note } = parsed.data;
+  const { type, amount, note } = parsed.data;
 
   // Usar fecha y hora actual automáticamente
   const row = await prisma.transaction.create({
@@ -62,7 +61,6 @@ export async function POST(req: Request) {
       type,
       amount,
       date: new Date(), // Siempre usar fecha y hora actual
-      category: category ?? null,
       note: note ?? null,
     },
   });
