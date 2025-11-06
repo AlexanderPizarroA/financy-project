@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { getSessionUser } from "@/lib/session-server";
-import { Transaction } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 
 const createSchema = z.object({
   type: z.enum(["IN", "OUT"]),
@@ -29,8 +29,10 @@ export async function GET(req: Request) {
     prisma.transaction.count({ where: { userId: user.id } }),
   ]);
 
+  type TransactionRow = Prisma.TransactionGetPayload<{}>;
+  
   return NextResponse.json({
-    data: rows.map((r: Transaction) => ({ ...r, amount: Number(r.amount) })),
+    data: rows.map((r: TransactionRow) => ({ ...r, amount: Number(r.amount) })),
     page,
     pageSize,
     total,
