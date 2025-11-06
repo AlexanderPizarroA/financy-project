@@ -34,48 +34,49 @@ async function getMovimientos(userId: string, page: number = 1, pageSize: number
 export default async function Dashboard({
   searchParams,
 }: {
-  searchParams: { page?: string };
+  searchParams: Promise<{ page?: string }>;
 }) {
   const user = await getSessionUser();
   if (!user) redirect("/login");
 
   const saldo = await getSaldo(user.id);
-  const page = Number(searchParams.page ?? "1");
+  const params = await searchParams;
+  const page = Number(params.page ?? "1");
   const { rows, total, pages } = await getMovimientos(user.id, page, 10);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-red-50 via-white to-orange-50">
       <Header />
-      <main className="container mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 max-w-4xl">
-        <div className="text-center mb-8 sm:mb-12">
-          <div className="flex justify-center mb-4">
-            <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-br from-[#d32f2f] to-[#ff6f00] rounded-full flex items-center justify-center shadow-lg">
-              <svg className="w-8 h-8 sm:w-10 sm:h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <main className="container mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8 max-w-4xl">
+        <div className="text-center mb-6 sm:mb-8 lg:mb-12">
+          <div className="flex justify-center mb-3 sm:mb-4">
+            <div className="w-14 h-14 sm:w-16 sm:h-16 lg:w-20 lg:h-20 bg-gradient-to-br from-[#d32f2f] to-[#ff6f00] rounded-full flex items-center justify-center shadow-lg">
+              <svg className="w-7 h-7 sm:w-8 sm:h-8 lg:w-10 lg:h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </div>
           </div>
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-[#d32f2f] mb-2">
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-bold text-[#d32f2f] mb-2">
             Tu efectivo
           </h1>
         </div>
 
-        <section className="grid gap-6 sm:gap-8">
-          <div className="rounded-3xl border-2 border-gray-200 bg-white shadow-xl p-6 sm:p-8">
+        <section className="grid gap-4 sm:gap-6 lg:gap-8">
+          <div className="rounded-3xl border-2 border-gray-200 bg-white shadow-xl p-4 sm:p-6 lg:p-8">
             <div className="flex items-center gap-3 mb-2">
               <svg className="w-6 h-6 sm:w-7 sm:h-7 text-[#d32f2f]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
               </svg>
               <p className="text-lg sm:text-xl text-gray-600 font-medium">Saldo actual</p>
             </div>
-            <p className="text-5xl sm:text-6xl lg:text-7xl font-bold mt-3 mb-2 text-gray-900">{fmtMoney(saldo)}</p>
+            <p className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold mt-2 sm:mt-3 mb-2 text-gray-900 break-words">{fmtMoney(saldo)}</p>
             <p className="text-sm sm:text-base text-gray-500">Actualizado ahora</p>
           </div>
 
-          <div className="flex flex-col sm:flex-row gap-4 sm:gap-6">
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 lg:gap-6">
             <Link 
               href="/agregar" 
-              className="flex-1 text-center rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white py-4 sm:py-5 text-xl sm:text-2xl font-bold shadow-lg hover:shadow-xl transition-all transform hover:scale-[1.02] flex items-center justify-center gap-2"
+              className="flex-1 text-center rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white py-3 sm:py-4 lg:py-5 text-lg sm:text-xl lg:text-2xl font-bold shadow-lg hover:shadow-xl transition-all transform hover:scale-[1.02] flex items-center justify-center gap-2"
             >
               <svg className="w-6 h-6 sm:w-7 sm:h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -84,7 +85,7 @@ export default async function Dashboard({
             </Link>
             <Link 
               href="/movimientos" 
-              className="flex-1 text-center rounded-2xl border-2 border-gray-300 hover:border-[#d32f2f] bg-white hover:bg-red-50 py-4 sm:py-5 text-xl sm:text-2xl font-bold text-gray-900 shadow-lg hover:shadow-xl transition-all transform hover:scale-[1.02] flex items-center justify-center gap-2"
+              className="flex-1 text-center rounded-2xl border-2 border-gray-300 hover:border-[#d32f2f] bg-white hover:bg-red-50 py-3 sm:py-4 lg:py-5 text-lg sm:text-xl lg:text-2xl font-bold text-gray-900 shadow-lg hover:shadow-xl transition-all transform hover:scale-[1.02] flex items-center justify-center gap-2"
             >
               <svg className="w-6 h-6 sm:w-7 sm:h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
@@ -95,47 +96,47 @@ export default async function Dashboard({
 
           {/* Historial de movimientos */}
           {total > 0 && (
-            <div className="rounded-3xl border-2 border-gray-200 bg-white shadow-xl p-6 sm:p-8">
-              <div className="flex items-center justify-between mb-6">
-                <div className="flex items-center gap-3">
-                  <svg className="w-6 h-6 sm:w-7 sm:h-7 text-[#d32f2f]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="rounded-3xl border-2 border-gray-200 bg-white shadow-xl p-4 sm:p-6 lg:p-8">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 sm:gap-0 mb-4 sm:mb-6">
+                <div className="flex items-center gap-2 sm:gap-3">
+                  <svg className="w-5 h-5 sm:w-6 sm:h-6 lg:w-7 lg:h-7 text-[#d32f2f] flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
-                  <h2 className="text-2xl sm:text-3xl font-bold text-gray-900">Movimientos recientes</h2>
+                  <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900">Movimientos recientes</h2>
                 </div>
                 {total > 10 && (
-                  <span className="text-sm sm:text-base text-gray-500">
+                  <span className="text-xs sm:text-sm lg:text-base text-gray-500">
                     {total} total
                   </span>
                 )}
               </div>
 
-              <div className="grid gap-3 sm:gap-4 mb-6">
+              <div className="grid gap-2 sm:gap-3 lg:gap-4 mb-4 sm:mb-6">
                 {rows.map((m) => (
                   <article 
                     key={m.id} 
-                    className="rounded-2xl border-2 border-gray-200 bg-gray-50 shadow-md p-4 sm:p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4"
+                    className="rounded-2xl border-2 border-gray-200 bg-gray-50 shadow-md p-3 sm:p-4 lg:p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 sm:gap-3 lg:gap-4"
                   >
-                    <div className="flex-1 min-w-0">
+                    <div className="flex-1 min-w-0 w-full sm:w-auto">
                       <div className="flex items-center gap-2 mb-1">
                         {m.type === "IN" ? (
-                          <svg className="w-5 h-5 sm:w-6 sm:h-6 text-emerald-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <svg className="w-4 h-4 sm:w-5 sm:h-6 lg:w-6 lg:h-6 text-emerald-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
                           </svg>
                         ) : (
-                          <svg className="w-5 h-5 sm:w-6 sm:h-6 text-rose-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <svg className="w-4 h-4 sm:w-5 sm:h-6 lg:w-6 lg:h-6 text-rose-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 12H4" />
                           </svg>
                         )}
-                        <p className="text-lg sm:text-xl font-bold text-gray-900 truncate">
+                        <p className="text-base sm:text-lg lg:text-xl font-bold text-gray-900 truncate">
                           {m.type === "IN" ? "Ingreso" : "Egreso"}
                         </p>
                       </div>
-                      <p className="text-sm sm:text-base text-gray-600 truncate">
+                      <p className="text-xs sm:text-sm lg:text-base text-gray-600 break-words">
                         {fmtDate(m.date)}{m.note ? ` — ${m.note}` : ""}
                       </p>
                     </div>
-                    <p className={`text-xl sm:text-2xl font-bold flex-shrink-0 ${m.type === "IN" ? "text-emerald-600" : "text-rose-600"}`}>
+                    <p className={`text-lg sm:text-xl lg:text-2xl font-bold flex-shrink-0 ${m.type === "IN" ? "text-emerald-600" : "text-rose-600"}`}>
                       {m.type === "IN" ? "+" : "−"} {fmtMoney(m.amount)}
                     </p>
                   </article>
